@@ -1,0 +1,56 @@
+# 服务器配置
+server:
+  port: 8082
+
+# 数据库配置
+spring:
+  application:
+    name: catalog-service
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/catalog_db_test?useUnicode=true&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: test
+        group: COURSEHUB_GROUP
+        ephemeral: true
+        heart-beat-interval: 5000
+        heart-beat-timeout: 15000
+        metadata:
+          version: 1.0.0
+          zone: zone-A
+          weight: 100
+          env: test
+          region: east
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+# 日志配置
+logging:
+  level:
+    com.zjgsu.djy.coursecloud.catalog: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG

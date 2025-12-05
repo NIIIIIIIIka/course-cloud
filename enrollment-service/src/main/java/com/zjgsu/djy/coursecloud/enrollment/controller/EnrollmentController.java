@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -16,9 +17,10 @@ import java.util.Map;
 @RequestMapping("/api/enrollments")
 @RequiredArgsConstructor
 public class EnrollmentController {
-    
+
     private final EnrollmentService enrollmentService;
-    
+    private final RestTemplate restTemplate;
+
     /**
      * 获取所有选课记录
      */
@@ -27,7 +29,7 @@ public class EnrollmentController {
         List<Enrollment> enrollments = enrollmentService.getAllEnrollments();
         return ResponseEntity.ok(enrollments);
     }
-    
+
     /**
      * 按课程查询选课
      */
@@ -36,7 +38,7 @@ public class EnrollmentController {
         List<Enrollment> enrollments = enrollmentService.getEnrollmentsByCourseId(courseId);
         return ResponseEntity.ok(enrollments);
     }
-    
+
     /**
      * 按学生查询选课
      */
@@ -45,7 +47,7 @@ public class EnrollmentController {
         List<Enrollment> enrollments = enrollmentService.getEnrollmentsByStudentId(studentId);
         return ResponseEntity.ok(enrollments);
     }
-    
+
     /**
      * 学生选课
      */
@@ -54,7 +56,7 @@ public class EnrollmentController {
         Enrollment enrollment = enrollmentService.enrollCourse(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(enrollment);
     }
-    
+
     /**
      * 学生退课
      */
@@ -64,5 +66,24 @@ public class EnrollmentController {
         return ResponseEntity.ok(Map.of("message", "退课成功"));
 
     }
-}
 
+    /**
+     * 测试User服务负载均衡
+     */
+    @GetMapping("/test/user-instance")
+    public ResponseEntity<Map<String, Object>> testUserServiceLoadBalance() {
+        Map<String, Object> response = restTemplate.getForObject("http://user-service/api/students/instance-info",
+                Map.class);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 测试Catalog服务负载均衡
+     */
+    @GetMapping("/test/catalog-instance")
+    public ResponseEntity<Map<String, Object>> testCatalogServiceLoadBalance() {
+        Map<String, Object> response = restTemplate.getForObject("http://catalog-service/api/courses/instance-info",
+                Map.class);
+        return ResponseEntity.ok(response);
+    }
+}

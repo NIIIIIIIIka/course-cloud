@@ -23,18 +23,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class EnrollmentService {
-    
+
     private final EnrollmentRepository enrollmentRepository;
     private final RestTemplate restTemplate;
     private final ServiceConfig serviceConfig;
-    
+
     /**
      * 获取所有选课记录
      */
     public List<Enrollment> getAllEnrollments() {
         return enrollmentRepository.findAll();
     }
-    
+
     /**
      * 根据课程ID查询选课记录
      */
@@ -43,7 +43,7 @@ public class EnrollmentService {
         validateCourseExists(courseId);
         return enrollmentRepository.findByCourseId(courseId);
     }
-    
+
     /**
      * 根据学生ID查询选课记录
      */
@@ -52,7 +52,7 @@ public class EnrollmentService {
         validateStudentExists(studentId);
         return enrollmentRepository.findByStudentId(studentId);
     }
-    
+
     /**
      * 学生选课
      */
@@ -60,7 +60,7 @@ public class EnrollmentService {
     public Enrollment enrollCourse(EnrollmentRequest request) {
         String courseId = request.getCourseId();
         String studentId = request.getStudentId();
-        
+
         // 验证学生是否存在
         validateStudentExists(studentId);
 
@@ -96,7 +96,7 @@ public class EnrollmentService {
 
         return enrollmentRepository.save(enrollment);
     }
-    
+
     /**
      * 学生退课
      */
@@ -104,25 +104,27 @@ public class EnrollmentService {
     public void dropCourse(String id) {
         Enrollment enrollment = enrollmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("选课记录不存在: " + id));
-        
+
         if (enrollment.getStatus() == Enrollment.EnrollmentStatus.DROPPED) {
             throw new BadRequestException("该选课记录已经退课");
         }
-        
+
         if (enrollment.getStatus() == Enrollment.EnrollmentStatus.COMPLETED) {
             throw new BadRequestException("已完成的课程不能退课");
         }
-        
+
         enrollment.setStatus(Enrollment.EnrollmentStatus.DROPPED);
         enrollmentRepository.save(enrollment);
     }
-    
+
     /**
      * 验证学生是否存在
      */
     private void validateStudentExists(String studentId) {
         try {
-            String url = serviceConfig.getUser().getUrl() + "/api/students/" + studentId;
+            // 使用服务名进行调用，支持Nacos服务发现和负载均衡
+            String url = "http://user-service/api/students/" + studentId;
+            log.debug("调用用户服务验证学生: {}", url);
             ResponseEntity<Object> response = restTemplate.getForEntity(url, Object.class);
             if (response.getStatusCode() != HttpStatus.OK) {
                 throw new ResourceNotFoundException("学生不存在: " + studentId);
@@ -134,13 +136,15 @@ public class EnrollmentService {
             throw new BadRequestException("无法验证学生信息，请稍后重试");
         }
     }
-    
+
     /**
      * 验证课程是否存在
      */
     private void validateCourseExists(String courseId) {
         try {
-            String url = serviceConfig.getCatalog().getUrl() + "/api/courses/" + courseId;
+            // 使用服务名进行调用，支持Nacos服务发现和负载均衡
+            String url = "http://catalog-service/api/courses/" + courseId;
+            log.debug("调用课程目录服务验证课程: {}", url);
             ResponseEntity<Object> response = restTemplate.getForEntity(url, Object.class);
             if (response.getStatusCode() != HttpStatus.OK) {
                 throw new ResourceNotFoundException("课程不存在: " + courseId);
@@ -153,4 +157,3 @@ public class EnrollmentService {
         }
     }
 }
-
