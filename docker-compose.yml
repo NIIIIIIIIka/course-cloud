@@ -1,0 +1,92 @@
+networks:
+  course-network:
+    driver: bridge
+volumes:  # 全局数据卷
+  catalog-data:
+  enrollment-data:
+
+services:
+  catalog-db:
+    image: mysql:8
+    container_name: catalog-db
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: catalog_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - catalog-data:/var/lib/mysql
+      - ./catalog-service/init.sql:/docker-entrypoint-initdb.d/init-mysql.sql
+    networks:
+      - course-network
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p123456"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  enrollment-db:
+    image: mysql:8
+    container_name: enrollment-db
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: enrollment_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - enrollment-data:/var/lib/mysql
+      - ./enrollment-service/init.sql:/docker-entrypoint-initdb.d/init-mysql.sql
+    networks:
+      - course-network
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p123456"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  catalog-service:
+    build:
+      context: ./catalog-service
+      dockerfile: Dockerfile
+    container_name: catalog-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_URL: "jdbc:mysql://catalog-db:3306/catalog_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+      DB_USERNAME: root
+      DB_PASSWORD: 123456
+    ports:
+      - "8081:8081"
+    depends_on:
+      catalog-db:
+        condition: service_healthy
+    networks:
+      - course-network
+    restart: unless-stopped
+
+  enrollment-service:
+    build:
+      context: ./enrollment-service
+      dockerfile: Dockerfile
+    container_name: enrollment-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_URL: "jdbc:mysql://enrollment-db:3306/enrollment_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+      DB_USERNAME: root
+      DB_PASSWORD: 123456
+      CATALOG_SERVICE_URL: http://catalog-service:8081
+    ports:
+      - "8082:8082"
+    depends_on:
+      enrollment-db:
+        condition: service_healthy
+      catalog-service:
+        condition: service_started
+    networks:
+      - course-network
+    restart: unless-stopped
