@@ -1,0 +1,6 @@
+com\zjgsu\djy\coursecloud\user\service\UserService.class
+com\zjgsu\djy\coursecloud\user\model\UpdateUserDTO.class
+com\zjgsu\djy\coursecloud\user\model\User.class
+com\zjgsu\djy\coursecloud\user\UserServiceApplication.class
+com\zjgsu\djy\coursecloud\user\controller\StudentController.class
+com\zjgsu\djy\coursecloud\user\repository\UserRepository.class

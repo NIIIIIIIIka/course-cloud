@@ -1,0 +1,8 @@
+com\zjgsu\djy\coursecloud\catalog\controller\CourseController.class
+com\zjgsu\djy\coursecloud\catalog\dto\CourseRequest.class
+com\zjgsu\djy\coursecloud\catalog\repository\CourseRepository.class
+com\zjgsu\djy\coursecloud\catalog\CatalogServiceApplication.class
+com\zjgsu\djy\coursecloud\catalog\controller\GlobalExceptionHandler.class
+com\zjgsu\djy\coursecloud\catalog\model\Course.class
+com\zjgsu\djy\coursecloud\catalog\service\CourseService.class
+com\zjgsu\djy\coursecloud\catalog\controller\CourseController$ErrorResponse.class

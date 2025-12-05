@@ -1,18 +1,21 @@
-server:
-  port: 8081
 spring:
-  application:
-    name: catalog-service
   datasource:
-    url: jdbc:mysql://localhost:3306/catalog_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: catalog_user
-    password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver  # 新增：MySQL 8 驱动类名
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
-      ddl-auto: update  # 开发环境使用update，生产环境改为none
-    show-sql: true  # 打印SQL语句（开发环境开启，生产环境关闭）
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect  # 显式指定方言（关键）
-        format_sql: true  # 格式化SQL语句（可选，增强可读性）
+      ddl-auto: update
+    show-sql: true
+
+  cloud:
+    nacos:
+      config:
+        enabled: ${SPRING_CLOUD_NACOS_CONFIG_ENABLED:false}
+      discovery:
+        enabled: ${SPRING_CLOUD_NACOS_DISCOVERY_ENABLED:false}
+
+server:
+  port: ${SERVER_PORT:8082}

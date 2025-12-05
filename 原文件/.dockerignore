@@ -1,7 +1,0 @@
-target/
-.git/
-.gitignore
-*.md
-docs/
-scripts/
-*.yml.bak
