@@ -1,0 +1,76 @@
+networks:
+  course-network:
+    driver: bridge
+
+services:
+  # 用户服务实例2 (端口8084)
+  user-service-2:
+    image: course-cloud-user-service:1.0.0
+    container_name: user-service-2
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://user-db:3306/user_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_CLOUD_NACOS_CONFIG_ENABLED: false
+      SPRING_CLOUD_NACOS_DISCOVERY_ENABLED: true
+      SERVER_PORT: 8084
+    ports:
+      - "8084:8084"
+    networks:
+      - course-network
+    restart: unless-stopped
+
+  # 用户服务实例3 (端口8085)
+  user-service-3:
+    image: course-cloud-user-service:1.0.0
+    container_name: user-service-3
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://user-db:3306/user_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_CLOUD_NACOS_CONFIG_ENABLED: false
+      SPRING_CLOUD_NACOS_DISCOVERY_ENABLED: true
+      SERVER_PORT: 8085
+    ports:
+      - "8085:8085"
+    networks:
+      - course-network
+    restart: unless-stopped
+
+  # 用户服务实例4 (端口8086)
+  user-service-4:
+    image: course-cloud-user-service:1.0.0
+    container_name: user-service-4
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://user-db:3306/user_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_CLOUD_NACOS_CONFIG_ENABLED: false
+      SPRING_CLOUD_NACOS_DISCOVERY_ENABLED: true
+      SERVER_PORT: 8086
+    ports:
+      - "8086:8086"
+    networks:
+      - course-network
+    restart: unless-stopped
+
+  # 课程目录服务实例2 (端口8087)
+  catalog-service-2:
+    image: course-cloud-catalog-service:1.0.0
+    container_name: catalog-service-2
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://catalog-db:3306/catalog_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_CLOUD_NACOS_CONFIG_ENABLED: false
+      SPRING_CLOUD_NACOS_DISCOVERY_ENABLED: true
+      SERVER_PORT: 8087
+    ports:
+      - "8087:8087"
+    networks:
+      - course-network
+    restart: unless-stopped

@@ -1,11 +1,9 @@
 -- 创建数据库
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
-CREATE DATABASE IF NOT EXISTS `user_db`
+CREATE DATABASE IF NOT EXISTS user_db
     DEFAULT CHARACTER SET utf8mb4
-    DEFAULT COLLATE utf8mb4_0900_ai_ci;
+    DEFAULT COLLATE utf8mb4_unicode_ci;
 
-USE `user_db`;
+USE user_db;
 
 
 CREATE TABLE `user` (
@@ -47,5 +45,3 @@ INSERT INTO user (id, user_id, name, email, user_type, major, grade, created_at)
 VALUES
 ('9a3f2b11-4c21-11ef-b7a9-0242ac120002', 'T1001', '赵老师', 'zhaols@example.com', 'teacher', NULL, NULL, NOW()),
 ('9a3f2c44-4c21-11ef-b7a9-0242ac120002', 'T1002', '钱老师', 'qianls@example.com', 'teacher', NULL, NULL, NOW());
-
-SET FOREIGN_KEY_CHECKS = 1;

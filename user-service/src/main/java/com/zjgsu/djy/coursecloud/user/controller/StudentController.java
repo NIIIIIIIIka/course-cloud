@@ -5,6 +5,7 @@ import com.zjgsu.djy.coursecloud.user.model.User;
 import com.zjgsu.djy.coursecloud.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,20 @@ public class StudentController {
 
     @Autowired
     private UserService userService;
+
+    @Value("${server.port}")
+    private String serverPort;
+
+    /**
+     * 获取服务实例信息（用于负载均衡验证）
+     */
+    @GetMapping("/instance-info")
+    public ResponseEntity<Map<String, String>> getInstanceInfo() {
+        return ResponseEntity.ok(Map.of(
+                "service", "user-service",
+                "port", serverPort,
+                "timestamp", LocalDateTime.now().toString()));
+    }
 
     /**
      * 获取所有学生
@@ -96,4 +111,3 @@ public class StudentController {
         }
     }
 }
-

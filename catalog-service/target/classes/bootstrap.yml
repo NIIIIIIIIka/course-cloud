@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: catalog-service
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        namespace: dev
+        group: COURSEHUB_GROUP
+        file-extension: yml
+        refresh-enabled: true
+        extension-configs:
+          - data-id: common-database.yml
+            group: COMMON_GROUP
+            refresh: true
+          - data-id: common-logging.yml
+            group: COMMON_GROUP
+            refresh: true

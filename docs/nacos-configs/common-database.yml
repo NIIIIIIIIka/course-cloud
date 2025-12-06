@@ -1,0 +1,28 @@
+# 通用数据库配置
+# Data ID: common-database.yml
+# Group: COMMON_GROUP
+# Namespace: dev
+
+# 所有服务共享的数据库连接池配置
+spring:
+  datasource:
+    hikari:
+      # 连接池配置
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
+  
+  jpa:
+    # JPA 配置
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true

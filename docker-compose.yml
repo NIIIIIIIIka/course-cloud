@@ -3,6 +3,28 @@ networks:
     driver: bridge
 
 services:
+  # Nacos服务注册与发现中心
+  nacos:
+    image: nacos/nacos-server:v3.1.0
+    container_name: nacos
+    environment:
+      - MODE=standalone
+      - NACOS_AUTH_ENABLE=false
+      - NACOS_AUTH_TOKEN=MzJieXRlc2VjcmV0a2V5LTMyYnl0ZXNlY3JldGtleS0=
+      - NACOS_AUTH_IDENTITY_KEY=serverIdentity
+      - NACOS_AUTH_IDENTITY_VALUE=security
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "88:8080"
+    networks:
+      - course-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8848/nacos/"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   # 用户数据库
   user-db:
     image: mysql:8
@@ -85,10 +107,12 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 123456
       SPRING_CLOUD_NACOS_CONFIG_ENABLED: false
-      SPRING_CLOUD_NACOS_DISCOVERY_ENABLED: false
+      SPRING_CLOUD_NACOS_DISCOVERY_ENABLED: true
     ports:
       - "8081:8081"
     depends_on:
+      nacos:
+        condition: service_healthy
       user-db:
         condition: service_healthy
     networks:
@@ -108,10 +132,12 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 123456
       SPRING_CLOUD_NACOS_CONFIG_ENABLED: false
-      SPRING_CLOUD_NACOS_DISCOVERY_ENABLED: false
+      SPRING_CLOUD_NACOS_DISCOVERY_ENABLED: true
     ports:
       - "8082:8082"
     depends_on:
+      nacos:
+        condition: service_healthy
       catalog-db:
         condition: service_healthy
     networks:
@@ -130,13 +156,13 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://enrollment-db:3306/enrollment_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 123456
-      SERVICES_USER_URL: http://user-service:8081
-      SERVICES_CATALOG_URL: http://catalog-service:8082
       SPRING_CLOUD_NACOS_CONFIG_ENABLED: false
-      SPRING_CLOUD_NACOS_DISCOVERY_ENABLED: false
+      SPRING_CLOUD_NACOS_DISCOVERY_ENABLED: true
     ports:
       - "8083:8083"
     depends_on:
+      nacos:
+        condition: service_healthy
       enrollment-db:
         condition: service_healthy
       user-service:
