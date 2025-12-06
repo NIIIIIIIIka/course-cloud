@@ -5,40 +5,24 @@ import com.zjgsu.djy.coursecloud.catalog.model.Course;
 import com.zjgsu.djy.coursecloud.catalog.service.CourseService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/courses")
 public class CourseController {
-
+    
     private final CourseService courseService;
-
-    @Value("${server.port}")
-    private String serverPort;
-
+    
     @Autowired
     public CourseController(CourseService courseService) {
         this.courseService = courseService;
     }
-
-    /**
-     * 获取服务实例信息（用于负载均衡验证）
-     */
-    @GetMapping("/instance-info")
-    public ResponseEntity<Map<String, String>> getInstanceInfo() {
-        return ResponseEntity.ok(Map.of(
-                "service", "catalog-service",
-                "port", serverPort,
-                "timestamp", LocalDateTime.now().toString()));
-    }
-
+    
     /**
      * 获取所有课程
      * GET /api/courses
@@ -48,7 +32,7 @@ public class CourseController {
         List<Course> courses = courseService.getAllCourses();
         return ResponseEntity.ok(courses);
     }
-
+    
     /**
      * 根据ID获取单个课程
      * GET /api/courses/{id}
@@ -59,7 +43,7 @@ public class CourseController {
                 .map(course -> ResponseEntity.ok(course))
                 .orElse(ResponseEntity.notFound().build());
     }
-
+    
     /**
      * 根据课程编码查询课程
      * GET /api/courses/code/{code}
@@ -70,7 +54,7 @@ public class CourseController {
                 .map(course -> ResponseEntity.ok(course))
                 .orElse(ResponseEntity.notFound().build());
     }
-
+    
     /**
      * 创建课程
      * POST /api/courses
@@ -84,14 +68,14 @@ public class CourseController {
             return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
         }
     }
-
+    
     /**
      * 更新课程
      * PUT /api/courses/{id}
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCourse(@PathVariable String id,
-            @Valid @RequestBody CourseRequest courseRequest) {
+    public ResponseEntity<?> updateCourse(@PathVariable String id, 
+                                         @Valid @RequestBody CourseRequest courseRequest) {
         try {
             Course course = courseService.updateCourse(id, courseRequest);
             return ResponseEntity.ok(course);
@@ -102,7 +86,7 @@ public class CourseController {
             return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
         }
     }
-
+    
     /**
      * 删除课程
      * DELETE /api/courses/{id}
@@ -117,23 +101,24 @@ public class CourseController {
             return ResponseEntity.notFound().build();
         }
     }
-
+    
     /**
      * 错误响应类
      */
     public static class ErrorResponse {
         private String message;
-
+        
         public ErrorResponse(String message) {
             this.message = message;
         }
-
+        
         public String getMessage() {
             return message;
         }
-
+        
         public void setMessage(String message) {
             this.message = message;
         }
     }
 }
+

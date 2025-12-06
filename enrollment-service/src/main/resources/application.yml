@@ -19,33 +19,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
-  
-  cloud:
-    nacos:
-      discovery:
-        server-addr: localhost:8848
-        namespace: dev
-        group: COURSEHUB_GROUP
-        ephemeral: true
-        heart-beat-interval: 5000
-        heart-beat-timeout: 15000
-        metadata:
-          version: 1.0.0
-          zone: zone-A
-          weight: 100
-          env: dev
-          region: east
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-  endpoint:
-    health:
-      show-details: always
-
-# 外部服务配置（本地开发使用，生产环境使用Nacos服务发现）
+# 外部服务配置
 services:
   user:
     url: http://localhost:8081
