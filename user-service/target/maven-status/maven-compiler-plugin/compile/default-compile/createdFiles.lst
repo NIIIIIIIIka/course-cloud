@@ -1,6 +1,13 @@
-com\zjgsu\djy\coursecloud\user\service\UserService.class
+com\zjgsu\djy\coursecloud\user\config\MetadataRoutingConfig.class
+com\zjgsu\djy\coursecloud\user\config\GracefulShutdownConfig$GracefulShutdownHandler.class
+com\zjgsu\djy\coursecloud\user\config\MetadataRoutingConfig$MetadataRoutingController.class
+com\zjgsu\djy\coursecloud\user\config\GracefulShutdownConfig.class
 com\zjgsu\djy\coursecloud\user\model\UpdateUserDTO.class
 com\zjgsu\djy\coursecloud\user\model\User.class
 com\zjgsu\djy\coursecloud\user\UserServiceApplication.class
 com\zjgsu\djy\coursecloud\user\controller\StudentController.class
 com\zjgsu\djy\coursecloud\user\repository\UserRepository.class
+com\zjgsu\djy\coursecloud\user\controller\FeignStudentController.class
+com\zjgsu\djy\coursecloud\user\service\UserService.class
+com\zjgsu\djy\coursecloud\user\config\NacosConfigExample.class
+com\zjgsu\djy\coursecloud\user\dto\StudentDto.class

@@ -31,7 +31,28 @@ spring:
 
 server:
   port: ${SERVER_PORT:8083}
+# Feign 配置
+feign:
+  circuitbreaker:
+    enabled: true # 启用熔断器
+  client:
+    config:
+      default:
+        connectTimeout: 3000 # 连接超时 3 秒
+        readTimeout: 5000 # 读取超时 5 秒
 
+# Resilience4j 熔断器配置
+resilience4j:
+  circuitbreaker:
+    instances:
+      user-service: # 针对 user-service 的熔断器配置
+        failureRateThreshold: 50 # 失败率阈值 50%
+        slidingWindowSize: 10 # 滑动窗口 10 次请求
+        slidingWindowType: COUNT_BASED # 基于请求数的滑动窗口
+      catalog-service: # 针对 catalog-service 的熔断器配置
+        failureRateThreshold: 50
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
 management:
   endpoints:
     web:

@@ -1,6 +1,11 @@
-C:\Users\ASUSBOOK\Desktop\djy\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\model\UpdateUserDTO.java
-C:\Users\ASUSBOOK\Desktop\djy\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\UserServiceApplication.java
-C:\Users\ASUSBOOK\Desktop\djy\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\model\User.java
-C:\Users\ASUSBOOK\Desktop\djy\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\controller\StudentController.java
-C:\Users\ASUSBOOK\Desktop\djy\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\service\UserService.java
-C:\Users\ASUSBOOK\Desktop\djy\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\repository\UserRepository.java
+D:\Project\java\microservice\course-cloud\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\model\UpdateUserDTO.java
+D:\Project\java\microservice\course-cloud\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\controller\FeignStudentController.java
+D:\Project\java\microservice\course-cloud\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\service\UserService.java
+D:\Project\java\microservice\course-cloud\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\UserServiceApplication.java
+D:\Project\java\microservice\course-cloud\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\config\NacosConfigExample.java
+D:\Project\java\microservice\course-cloud\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\dto\StudentDto.java
+D:\Project\java\microservice\course-cloud\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\model\User.java
+D:\Project\java\microservice\course-cloud\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\config\GracefulShutdownConfig.java
+D:\Project\java\microservice\course-cloud\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\repository\UserRepository.java
+D:\Project\java\microservice\course-cloud\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\config\MetadataRoutingConfig.java
+D:\Project\java\microservice\course-cloud\user-service\src\main\java\com\zjgsu\djy\coursecloud\user\controller\StudentController.java

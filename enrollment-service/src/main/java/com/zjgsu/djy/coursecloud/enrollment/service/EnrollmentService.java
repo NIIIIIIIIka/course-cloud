@@ -1,7 +1,12 @@
 package com.zjgsu.djy.coursecloud.enrollment.service;
 
+import com.zjgsu.djy.coursecloud.enrollment.client.CatalogClient;
+import com.zjgsu.djy.coursecloud.enrollment.client.ServiceUnavailableException;
+import com.zjgsu.djy.coursecloud.enrollment.client.UserClient;
 import com.zjgsu.djy.coursecloud.enrollment.config.ServiceConfig;
+import com.zjgsu.djy.coursecloud.enrollment.dto.CourseDto;
 import com.zjgsu.djy.coursecloud.enrollment.dto.EnrollmentRequest;
+import com.zjgsu.djy.coursecloud.enrollment.dto.StudentDto;
 import com.zjgsu.djy.coursecloud.enrollment.exception.BadRequestException;
 import com.zjgsu.djy.coursecloud.enrollment.exception.ResourceNotFoundException;
 import com.zjgsu.djy.coursecloud.enrollment.model.Enrollment;
@@ -13,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +29,8 @@ import java.util.UUID;
 public class EnrollmentService {
 
     private final EnrollmentRepository enrollmentRepository;
-    private final RestTemplate restTemplate;
+    private final UserClient userClient;
+    private final CatalogClient catalogClient;
     private final ServiceConfig serviceConfig;
 
     /**
@@ -122,37 +127,44 @@ public class EnrollmentService {
      */
     private void validateStudentExists(String studentId) {
         try {
-            // 使用服务名进行调用，支持Nacos服务发现和负载均衡
-            String url = "http://user-service/api/students/" + studentId;
-            log.debug("调用用户服务验证学生: {}", url);
-            ResponseEntity<Object> response = restTemplate.getForEntity(url, Object.class);
-            if (response.getStatusCode() != HttpStatus.OK) {
-                throw new ResourceNotFoundException("学生不存在: " + studentId);
+            // Feign调用：返回StudentDto则代表存在，抛出异常则代表不存在/服务不可用
+            StudentDto studentDto = userClient.getStudent(studentId);
+            // 补充：如果远程服务返回null（极端情况），也判定为不存在
+            if (studentDto == null) {
+                throw new ResourceNotFoundException("studentDto为空，学生不存在: " + studentId);
             }
-        } catch (HttpClientErrorException.NotFound e) {
-            throw new ResourceNotFoundException("学生不存在: " + studentId);
+        } catch (ServiceUnavailableException e) {
+            // 捕获降级异常，转抛友好提示
+            log.error("用户服务不可用：{}", e.getMessage());
+            throw new BadRequestException(e.getMessage());
         } catch (Exception e) {
-            log.error("验证学生存在性时发生错误: {}", e.getMessage());
+            // 捕获其他异常（如网络异常、序列化异常等）
+            log.error("验证学生存在性时发生错误: {}", e.getMessage(), e);
+            // 优先判断是否是「学生不存在」（Feign会把404转为FeignException，需解析）
+            if (e.getMessage().contains("404") || e.getMessage().contains("Not Found")) {
+                throw new ResourceNotFoundException("验证学生存在性时发生错误,学生不存在: " + studentId);
+            }
             throw new BadRequestException("无法验证学生信息，请稍后重试");
         }
     }
-
     /**
      * 验证课程是否存在
      */
     private void validateCourseExists(String courseId) {
         try {
-            // 使用服务名进行调用，支持Nacos服务发现和负载均衡
-            String url = "http://catalog-service/api/courses/" + courseId;
-            log.debug("调用课程目录服务验证课程: {}", url);
-            ResponseEntity<Object> response = restTemplate.getForEntity(url, Object.class);
-            if (response.getStatusCode() != HttpStatus.OK) {
+            // Feign调用：返回CourseDto则代表存在
+            CourseDto courseDto = catalogClient.getCourse(courseId);
+            if (courseDto == null) {
                 throw new ResourceNotFoundException("课程不存在: " + courseId);
             }
-        } catch (HttpClientErrorException.NotFound e) {
-            throw new ResourceNotFoundException("课程不存在: " + courseId);
+        } catch (ServiceUnavailableException e) {
+            log.error("课程服务不可用：{}", e.getMessage());
+            throw new BadRequestException(e.getMessage());
         } catch (Exception e) {
-            log.error("验证课程存在性时发生错误: {}", e.getMessage());
+            log.error("验证课程存在性时发生错误: {}", e.getMessage(), e);
+            if (e.getMessage().contains("404") || e.getMessage().contains("Not Found")) {
+                throw new ResourceNotFoundException("课程不存在: " + courseId);
+            }
             throw new BadRequestException("无法验证课程信息，请稍后重试");
         }
     }

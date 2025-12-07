@@ -27,7 +27,7 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:8848
-        namespace: dev
+        namespace: dev #自动注册到 Nacos 注册中心的 dev 命名空间
         group: COURSEHUB_GROUP
         ephemeral: true
         heart-beat-interval: 5000
