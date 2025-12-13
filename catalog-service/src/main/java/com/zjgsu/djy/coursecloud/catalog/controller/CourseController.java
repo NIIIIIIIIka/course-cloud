@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 @RestController
 @RequestMapping("/api/courses")
 public class CourseController {
-
+    private static final Logger log = LoggerFactory.getLogger(CourseController.class);
     private final CourseService courseService;
 
     @Value("${server.port}")
@@ -32,7 +33,7 @@ public class CourseController {
      * 获取服务实例信息（用于负载均衡验证）
      */
     @GetMapping("/instance-info")
-    public ResponseEntity<Map<String, String>> getInstanceInfo() {
+    public ResponseEntity<Map<String, String>> getInstanceInfo(    ) {
         return ResponseEntity.ok(Map.of(
                 "service", "catalog-service",
                 "port", serverPort,
@@ -44,8 +45,12 @@ public class CourseController {
      * GET /api/courses
      */
     @GetMapping
-    public ResponseEntity<List<Course>> getAllCourses() {
+    public ResponseEntity<List<Course>> getAllCourses(
+            @RequestHeader(value = "X-User-Id", required = false) String userId
+    ) {
+        log.info("用户 {}（ID: {}）发起选课请求",  userId);
         List<Course> courses = courseService.getAllCourses();
+
         return ResponseEntity.ok(courses);
     }
 

@@ -21,5 +21,5 @@ public class UpdateUserDTO {
 
     private Integer grade;
 
-
+    private String password;
 }

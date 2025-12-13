@@ -5,6 +5,7 @@ import com.zjgsu.djy.coursecloud.user.model.User;
 import com.zjgsu.djy.coursecloud.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,7 +24,7 @@ public class UserService {
     private UserRepository userRepository;
 
     private static final String USER_TYPE_STUDENT = "student";
-
+    private static final String USER_TYPE_TEACHER = "teacher";
     /**
      * 获取所有学生
      */
@@ -62,6 +63,7 @@ public class UserService {
 
         user.setId(UUID.randomUUID().toString());
         user.setUserType(USER_TYPE_STUDENT);
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (user.getCreatedAt() == null) {
             user.setCreatedAt(LocalDateTime.now());
         }
@@ -95,11 +97,25 @@ public class UserService {
             }
         }
 
-        user.setUserId(userDetails.getUserId());
-        user.setName(userDetails.getName());
-        user.setEmail(userDetails.getEmail());
-        user.setMajor(userDetails.getMajor());
-        user.setGrade(userDetails.getGrade());
+        if (userDetails.getUserId()!=null){
+            user.setUserId(userDetails.getUserId());
+        }
+        if(userDetails.getName()!=null){
+            user.setName(userDetails.getName());
+        }
+        if(userDetails.getEmail()!=null){
+            user.setEmail(userDetails.getEmail());
+        }
+        if(userDetails.getMajor()!=null){
+            user.setMajor(userDetails.getMajor());
+        }
+        if(userDetails.getGrade()!=null){
+            user.setGrade(userDetails.getGrade());
+        }
+        if(userDetails.getPassword()!=null){
+            user.setPassword(userDetails.getPassword());
+        }
+
 
         return userRepository.save(user);
     }
@@ -115,7 +131,51 @@ public class UserService {
             throw new RuntimeException("ID对应的用户不是学生: " + id);
         }
 
+
         userRepository.delete(user);
+    }
+    // 检查用户ID是否存在
+    public boolean existsByUserId(String userId) {
+        return userRepository.findByUserId(userId).isPresent();
+    }
+
+    // 检查邮箱是否存在
+    public boolean existsByEmail(String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
+
+    // 保存用户（可以在这里添加密码加密）
+    public User saveUser(User user) {
+        // 实际生产环境应该加密密码
+        // String encodedPassword = passwordEncoder.encode(user.getPassword());
+        // user.setPassword(encodedPassword);
+
+        return userRepository.save(user);
+    }
+    /**
+     * 登录验证
+     */
+
+    public User findByUserIdAndPassword(String userid, String password) {
+        // 实际业务中需加密密码（如BCrypt），此处简化为明文匹配
+        return userRepository.findByUserIdAndPassword(userid, password)
+                .orElse(null);
+    }
+    //加密版
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+//    public User findByUserIdAndPassword(String username, String rawPassword) {
+//        Optional<User> userOpt = userRepository.findById(username);
+//        if (userOpt.isPresent()) {
+//            User user = userOpt.get();
+//            // 验证加密密码
+//            if (passwordEncoder.matches(rawPassword, user.getPassword())) {
+//                return user;
+//            }
+//        }
+//        return null;
+//    }
+    public Optional<User> findByUserId(String UserId){
+        return userRepository.findByUserId(UserId);
     }
 }
 

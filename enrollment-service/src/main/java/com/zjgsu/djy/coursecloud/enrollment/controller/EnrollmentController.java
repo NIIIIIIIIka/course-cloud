@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -66,24 +67,32 @@ public class EnrollmentController {
         return ResponseEntity.ok(Map.of("message", "退课成功"));
 
     }
+    @GetMapping("/instance-info")
+    public ResponseEntity<Map<String, String>> getInstanceInfo() {
+
+        // 打印用户信息（验证透传成功）
+//        System.out.println("当前登录用户：ID=" + userId + ", 用户名=" + username + ", 角色=" + userRole);
+
+        return ResponseEntity.ok(Map.of("message", "实例测试成功"));
+    }
 
     /**
      * 测试User服务负载均衡
      */
-    @GetMapping("/test/user-instance")
-    public ResponseEntity<Map<String, Object>> testUserServiceLoadBalance() {
-        Map<String, Object> response = restTemplate.getForObject("http://user-service/api/students/instance-info",
-                Map.class);
-        return ResponseEntity.ok(response);
-    }
+//    @GetMapping("/test/user-instance")
+//    public ResponseEntity<Map<String, Object>> testUserServiceLoadBalance() {
+//        Map<String, Object> response = restTemplate.getForObject("http://user-service/api/students/instance-info",
+//                Map.class);
+//        return ResponseEntity.ok(response);
+//    }
 
     /**
      * 测试Catalog服务负载均衡
      */
-    @GetMapping("/test/catalog-instance")
-    public ResponseEntity<Map<String, Object>> testCatalogServiceLoadBalance() {
-        Map<String, Object> response = restTemplate.getForObject("http://catalog-service/api/courses/instance-info",
-                Map.class);
-        return ResponseEntity.ok(response);
-    }
+//    @GetMapping("/test/catalog-instance")
+//    public ResponseEntity<Map<String, Object>> testCatalogServiceLoadBalance() {
+//        Map<String, Object> response = restTemplate.getForObject("http://catalog-service/api/courses/instance-info",
+//                Map.class);
+//        return ResponseEntity.ok(response);
+//    }
 }

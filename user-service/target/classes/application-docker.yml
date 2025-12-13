@@ -34,3 +34,6 @@ management:
   endpoint:
     health:
       show-details: always
+jwt:
+  secret: your-256bit-secret-key-here-1234567890abcdefghijklmnopqrstuvwxyz
+  expiration: 86400000 # 24小时
